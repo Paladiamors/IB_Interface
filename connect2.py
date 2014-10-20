@@ -7,7 +7,7 @@ Created on Aug 26, 2014
 from com.ib.client import EClientSocket
 from com.ib.client import Contract, TagValue
 
-from wrapper import Wrapper
+from wrapper2 import Wrapper
 
 import time
 import sockLib
@@ -24,8 +24,8 @@ class ClientManager:
         self.subscriptions = {}
         self.subscriptionCounter = 1
         
-        wrapper = Wrapper()
-        self.client=EClientSocket(wrapper)
+        self.wrapper = Wrapper()
+        self.client=EClientSocket(self.wrapper)
         self.client.eConnect(host, port, id)
         
         time.sleep(5)
@@ -81,35 +81,66 @@ class ClientManager:
         
         return self.client.connected
     
+    def getData(self):
+        
+        return self.wrapper.queue.get()
+        
 class Server:
     
     def __init__(self, port  = 12000):
     
-        self.activeClients = []
+        self.activeClients = {}
         self.acceptQueue = Queue.Queue()
         self.serverSocket = sockLib.serverSocket(port)
         
+        print "starting client manager"
+        self.clientManager = ClientManager()
+        
+        print "creating connection"
         self.acceptThread = threading.Thread(target = self.acceptConnection)
         
+        self.acceptThread.start()
+        
+        print "subscribing"
+        self.clientManager.subscribeFX("USD", "JPY")
+        
+        self.transmitData()
+
     def acceptConnection(self):
         
         while True:
             sock, address = self.serverSocket.accept()
-            self.acceptQueue.put(sock)
+            print "adding connection"
+            self.activeClients[sock] = sockLib.JsonProtocol(sock)
     
-    
+    def transmitData(self):
         
-        
+        while True:
+            print "getting data"
+            data = self.clientManager.getData()
+            badSocks = []
+            for sock, protocol in self.activeClients.items():
+                try:
+                    protocol.sendData(data)
+                except:
+                    badSocks.append(sock)
+
+                    
+            while badSocks: #remove bad sockets
+                self.activeClients.pop(badSocks.pop())
+
 
 if __name__ == "__main__":
     
-    clientManager = ClientManager()
+    #clientManager = ClientManager()
 #     clientManager.subscribeStock("AAPL")
 #     clientManager.subscribeStock("AMZN")
 #     clientManager.subscribeStock("YHOO")
 #     clientManager.subscribeStock("GOOG")
 #     clientManager.subscribeStock("SNE")
-    clientManager.subscribeFX("USD", "JPY")
+    #clientManager.subscribeFX("USD", "JPY")
+    
+    server = Server()
     
     
 # contract = Contract()
