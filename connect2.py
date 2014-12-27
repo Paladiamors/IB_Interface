@@ -22,6 +22,7 @@ class ClientManager:
         self.port=port
         self.id=id
         self.subscriptions = {}
+        self.tickerMap = {}
         self.subscriptionCounter = 1
         
         self.wrapper = Wrapper()
@@ -38,6 +39,7 @@ class ClientManager:
         contract.m_secType = "STK"
 
         self.subscriptions[symbol] = self.subscriptionCounter
+        self.tickerMap[self.subscriptionCounter] = symbol
         self.client.reqMktData(self.subscriptionCounter, contract, "", False, [])
         self.subscriptionCounter+=1
 
@@ -57,6 +59,7 @@ class ClientManager:
         symbol = ".".join([base, priceCur])
 
         self.subscriptions[symbol] = self.subscriptionCounter
+        self.tickerMap[self.subscriptionCounter] = symbol
         self.client.reqMktData(self.subscriptionCounter, contract, "", False, [])
         self.subscriptionCounter+=1        
         
@@ -64,7 +67,7 @@ class ClientManager:
         
         if symbol in self.subscription:
             self.client.cancelMktData(self.subscriptions[symbol])
-            self.subscriptions.pop(symbol)
+            self.tickerMap.pop(self.subscriptions.pop(symbol))
         
     def unsubscribeFX(self, base, priceCur):
         
@@ -72,7 +75,8 @@ class ClientManager:
         
         if symbol in self.subscription:
             self.client.cancelMktData(self.subscriptions[symbol])
-            self.subscriptions.pop(symbol)
+            self.tickerMap.pop(self.subscriptions.pop(symbol))
+            
     def reqCurrentTime(self):
         
         print self.client.reqCurrentTime()
@@ -83,7 +87,9 @@ class ClientManager:
     
     def getData(self):
         
-        return self.wrapper.queue.get()
+        data = self.wrapper.queue.get()
+        data["tickerId"] = self.tickerMap[data["tickerId"]]
+        return data
         
 class Server:
     
@@ -98,7 +104,6 @@ class Server:
         
         print "creating connection"
         self.acceptThread = threading.Thread(target = self.acceptConnection)
-        
         self.acceptThread.start()
         
         print "subscribing"

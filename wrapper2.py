@@ -80,111 +80,233 @@ class Wrapper(EWrapper):
                             56: "VOLUME_RATE"
                         }
     def tickPrice(self,  tickerId,  field,  price,  canAutoExecute):
-        
-        data = {"time": datetime.datetime.now().isoformat(), "tickerId": tickerId, "field": self.tickDict[field], "price": price, "canAutoExecute": canAutoExecute}
-        print data
+        msgType = "tickPrice"
+        data = {"msgType":msgType, "time": datetime.datetime.now().isoformat(), "tickerId": tickerId, "field": self.tickDict[field], "price": price, "canAutoExecute": canAutoExecute}
         self.queue.put(data)
     
     def tickSize(self,  tickerId,  field,  size):
-        data = {"time": datetime.datetime.now().isoformat(), "tickerId": tickerId, "field": self.tickDict[field], "size": size}
-        print data
+        msgType = "tickSize"
+        data = {"msgType":msgType, "time": datetime.datetime.now().isoformat(), "tickerId": tickerId, "field": self.tickDict[field], "size": size}
         self.queue.put(data)
+        
     def tickOptionComputation(self,  tickerId,  field,  impliedVol,
              delta,  optPrice,  pvDividend,
              gamma,  vega,  theta,  undPrice):
-        pass
-    
+        
+        msgType = "tickOptionComputation" 
+        data = {"msgType":msgType, "tickerId":tickerId,  "field":field,  "impliedVol":impliedVol, "delta":delta,  "optPrice":optPrice,  "pvDividend":pvDividend, "gamma":gamma,  "vega":vega,  "theta":theta,  "undPrice":undPrice}
+        self.queue.put(data)
+        
     def tickGeneric(self, tickerId,  tickType,  value):
-        print "tickGeneric", tickerId,  tickType,  value 
-    
+        msgType = "tickGeneric"
+        data = {"msgType":msgType, "tickerId":tickerId,  "tickType":tickType,  "value":value} 
+        self.queue.put(data)
+        
     def tick(self, tickerId,  tickType,  value):
-        print "tick", tickerId,  tickType,  value
+        msgType = "tick"
+        data = {"msgType":msgType, "tickerId":tickerId,  "tickType":tickType,  "value":value}
+        self.queue.put(data)
         
     def tickEFP(self, tickerId,  tickType,  basisPos,
              formattedBasisPos,  impliedFuture,  holdDays,
              futureExpiry,  dividendImpact,  dividendsToExpiry):
         
-        pass
+        msgType = "tickEFP"
+        data = {"msgType":msgType, "tickerId":tickerId,  "tickType":tickType,  "basisPos":basisPos, "formattedBasisPos":formattedBasisPos,  "impliedFuture":impliedFuture,  "holdDays":holdDays, "futureExpiry":futureExpiry,  "dividendImpact":dividendImpact,  "dividendsToExpiry":dividendsToExpiry}
+        self.queue.put(data)
+        
     def orderStatus(self,  orderId,  status,  filled,  remaining,
              avgFillPrice,  permId,  parentId,  lastFillPrice,
              clientId,  whyHeld):
-        pass
+        
+        msgType = "orderStatus" 
+        data = {"msgType":msgType, "orderId":orderId,  "status":status,  "filled":filled,  "remaining":remaining, "avgFillPrice":avgFillPrice,  "permId":permId,  "parentId":parentId,  "lastFillPrice":lastFillPrice, "clientId":clientId,  "whyHeld":whyHeld}
+        self.queue.put(data)
+        
     def openOrder(self,  orderId,  contract,  order,  orderState):
+        
+        msgType = "openOrder"
+        data = {"msgType":msgType, "orderId":orderId,  "contract":contract,  "order":order,  "orderState":orderState}
+        self.queue.put(data)
+   
+    def openOrderEnd(self):
         pass
-    def openOrderEnd(self,):
-        pass
+    
     def updateAccountValue(self, key,  value,  currency,  accountName):
-        pass
+        msgType = "updateAccountValue"
+        data = {"msgType":msgType, "key":key,  "value":value,  "currency":currency,  "accountName":accountName}
+        self.queue.put(data)
+        
+        
     def updatePortfolio(self, contract,  position,  marketPrice,  marketValue,
              averageCost,  unrealizedPNL,  realizedPNL,  accountName):
-        pass
+        msgType = "updatePortfolio"
+        data = {"msgType":msgType, "contract":contract,  "position":position,  "marketPrice":marketPrice,  "marketValue":marketValue, "averageCost":averageCost,  "unrealizedPNL":unrealizedPNL,  "realizedPNL":realizedPNL,  "accountName":accountName}
+        self.queue.put(data)
+    
     def updateAccountTime(self, timeStamp):
-        pass
+        msgType = "updateAccountTime" 
+        data = {"msgType":msgType, "timestamp" : timeStamp}
+        self.queue.put(data)
+        
     def accountDownloadEnd(self, accountName):
-        pass
+        msgType = "accountDownloadEnd"
+        data = {"msgType":msgType, "accountName": accountName}
+        self.queue.put(data)
+    
     def nextValidId(self,  orderId):
-        pass
+        msgType = "nextValidId"
+        data = {"msgType":msgType, "orderId": orderId}
+        self.queue.put(data)
+    
     def contractDetails(self, reqId,  contractDetails):
-        pass
+        msgType = "contractDetails"
+        data = {"msgType":msgType, "reqId":reqId,  "contractDetails":contractDetails}
+        self.queue.put(data)
+    
     def bond(self, reqId,  contractDetails):
-        pass
+        msgType = "bond"
+        data = {"msgType":msgType, "reqId":reqId,  "contractDetails":contractDetails}
+        self.queue.put(data)
+    
     def contractDetailsEnd(self, reqId):
-        pass
+        msgType = "contractDetailsEnd"
+        data = {"msgType":msgType, "reqId": reqId}
+        self.queue.put(data)
+        
     def execDetails(self,  reqId,  contract,  execution):
-        pass
+        msgType = "execDetails"
+        data = {"msgType":msgType, "reqId":reqId,  "contract":contract,  "execution":execution}
+        self.queue.put(data)
+    
     def execDetailsEnd(self,  reqId):
-        pass
+        msgType = "execDetailsEnd"
+        data = {"msgType":msgType, "reqId": reqId}
+        self.queue.put(data)
+    
     def updateMktDepth(self,  tickerId,  position,  operation,  side,  price,  size):
-        pass
+        msgType = "updateMktDepth"
+        data = {"msgType":msgType, "tickerId":tickerId,  "position":position,  "operation":operation,  "side":side,  "price":price,  "size":size}
+        self.queue.put(data)
+        
     def updateMktDepthL2(self,  tickerId,  position,  marketMaker,  operation,
              side,  price,  size):
-        pass
+        msgType = "updateMktDepthL2"
+        data = {"msgType":msgType, "tickerId":tickerId,  "position":position,  "marketMaker":marketMaker,  "operation":operation, "side":side,  "price":price,  "size":size}
+        self.queue.put(data)
+    
     def updateNewsBulletin(self,  msgId,  msgType,  message,  origExchange):
-        pass
+        msgType = "updateNewsBulletin"
+        data = {"msgType":msgType, "msgId":msgId,  "msgType":msgType,  "message":message,  "origExchange":origExchange}
+        self.queue.put(data)
+    
     def managedAccounts(self,  accountsList):
-        pass
+        msgType = "managedAccounts"
+        data = {"msgType":msgType, "accountsList": accountsList}
+        self.queue.put(data)
+    
     def receiveFA(self, faDataType,  xml):
-        pass
+        msgType = "receiveFA"
+        data = {"msgType":msgType, "faDataType":faDataType,  "xml":xml}
+        self.queue.put(data)
+    
     def historicalData(self, reqId,  date,  open,  high,  low,
                        close,  volume,  count,  WAP, hasGaps):
-        pass
+        msgType = "historicalData"
+        data = {"msgType":msgType, "reqId":reqId,  "date":date,  "open":open,  "high":high,  "low":low, "close":close,  "volume":volume,  "count":count,  "WAP":WAP, "hasGaps":hasGaps}
+        self.queue.put(data) 
+    
     def scannerParameters(self, xml):
-        pass
+        msgType = "scannerParameters"
+        data = {"msgType":msgType, "xml": xml}
+        self.queue.put(data)
+    
     def scannerData(self, reqId,  rank,  contractDetails,  distance,
              benchmark,  projection,  legsStr):
-        pass
+        
+        msgType = "scannerData"
+        data = {"msgType":msgType, "reqId":reqId,  "rank":rank,  "contractDetails":contractDetails,  "distance":distance, "benchmark":benchmark,  "projection":projection,  "legsStr":legsStr}
+        self.queue.put(data)
+    
     def scannerDataEnd(self, reqId):
-        pass
+        msgType = "scannerDataEnd"
+        data = {"msgType":msgType, "reqId": reqId}
+        self.queue.put(data)
+        
     def realtimeBar(self, reqId,  time,  open,  high,  low,  close,  volume,  wap,  count):
-        pass
+        msgType = "realtimeBar"
+        data = {"msgType":msgType, "reqId":reqId,  "time":time,  "open":open,  "high":high,  "low":low,  "close":close,  "volume":volume,  "wap":wap,  "count":count}
+        self.queue.put(data)
+    
     def currentTime(self, time):
-        pass
+        msgType = "currentTime"
+        data = {"msgType":msgType, "time": time}
+        self.queue.put(data)
+        
     def fundamentalData(self, reqId,  data):
-        pass
+        msgType = "fundamentalData"
+        data = {"msgType":msgType, "reqId":reqId,  "data":data}
+        self.queue.put(data)
+   
     def deltaNeutralValidation(self, reqId,  underComp):
-        pass
+        msgType = "deltaNeutralValidation"
+        data = {"msgType":msgType, "reqId":reqId,  "underComp":underComp}
+        self.queue.put(data)
+        
     def tickSnapshotEnd(self, reqId):
-        pass
+        msgType = "tickSnapshotEnd"
+        data = {"msgType":msgType, "reqId": reqId}
+        self.queue.put(data)
+    
     def marketDataType(self, reqId,  marketDataType):
-        pass
+        msgType = "marketDataType"
+        data = {"msgType":msgType, "reqId":reqId,  "marketDataType":marketDataType}
+        self.queue.put(data)
+    
     def commissionReport(self, commissionReport):
-        pass
+        msgType = "commissionReport"
+        data = {"msgType":msgType, "commissionReport": commissionReport}
+        self.queue.put(data)
+    
     def position(self, account,  contract,  pos,  avgCost):
-        pass
-    def positionEnd(self,):
-        pass
+        msgType = "position"
+        data = {"msgType":msgType, "account":account,  "contract":contract,  "pos":pos,  "avgCost": avgCost}
+        self.queue.put(data)    
+    
+    def positionEnd(self):
+        msgType = "positionEnd"
+        data = {"msgType":msgType}
+        self.queue.put(data)
+             
     def accountSummary(self, reqId,  account,  tag,  value,  currency):
-        pass
+        msgType = "accountSummary" 
+        data = {"msgType":msgType, "reqId":reqId,  "account":account,  "tag":tag,  "value":value,  "currency":currency}
+        self.queue.put(data)
+        
     def accountSummaryEnd(self, reqId):
-        pass
+        msgType = "accountSummaryEnd"
+        data = {"msgType":msgType, "reqId": reqId}
+        self.queue.put(data)
+    
     def verifyMessageAPI(self,  apiData):
-        pass
+        msgType = "verifyMessageAPI"
+        data = {"msgType":msgType, "apiData": apiData}
+        self.queue.put(data)
+        
     def verifyCompleted(self, isSuccessful,  errorText):
-        pass
+        msgType = "verifyCompleted"
+        data = {"msgType":msgType, "isSuccessful":isSuccessful,  "errorText":errorText}
+        self.queue.put(data)
+        
     def displayGroupList(self,  reqId,  groups):
-        pass
+        msgType = "displayGroupList"
+        data = {"msgType":msgType, "reqId":reqId,  "groups":groups}
+        self.queue.put(data)
+        
     def displayGroupUpdated(self,  reqId,  contractInfo):
-        pass
+        msgType = "displayGroupUpdated"
+        data = {"msgType":msgType, "reqId":reqId,  "contractInfo":contractInfo}
+        self.queue.put(data)
 
     def error(self, *args):
         print "error", args
